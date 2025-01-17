@@ -1,4 +1,14 @@
 services:
+  develop:
+    container_name: scraper_dev
+    build:
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+    volumes:
+      - .:/workspaces
+    environment:
+      SELENIUM_URL: http://selenium:4444/wd/hub
+    tty: true
   selenium:
     container_name: scraper_selenium
     image: selenium/standalone-chrome:4.27.0
@@ -16,5 +26,4 @@ services:
       - .:/app
     environment:
       SELENIUM_URL: http://selenium:4444/wd/hub
-    command: jupyter-notebook --port=8888 --ip=0.0.0.0 --allow-root --NotebookApp.token=''
     tty: true
