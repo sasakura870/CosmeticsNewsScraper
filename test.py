@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 import os
 import time
 
-url = "https://www.google.com"
+url = "https://www.suqqu.com/ja/news"
 keyword = "スクレイピング"
 
 driver = webdriver.Remote(
@@ -15,7 +15,12 @@ driver = webdriver.Remote(
 driver.implicitly_wait(10)
 
 driver.get(url)
-driver.find_element(By.NAME, "q").send_keys(keyword + Keys.RETURN)
+lists = driver.find_elements(By.CLASS_NAME, "m-suqqu_newsList-item")
+for li in lists:
+    link = li.find_element(By.CLASS_NAME, "m-suqqu_newsList-link")
+    print(link.get_attribute("href"))
+    title = link.find_element(By.CLASS_NAME, "m-suqqu_newsList-title").text
+    print(title)
 
 time.sleep(5)
 driver.quit()
