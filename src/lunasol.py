@@ -42,7 +42,7 @@ for section in sections:
                     "product": f"{category} {product}",
                     "url": url
                 })
-json.dump(eolDataList, open("data/LUNASOL/eol.json", "w", encoding="utf-8"), ensure_ascii=False)
+json.dump(eolDataList, open("/workspaces/data/LUNASOL/eol.json", "w", encoding="utf-8"), ensure_ascii=False)
 
 time.sleep(5)
 driver.quit()
