@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
+from utils import extract_path_between, extract_number_in_string
 import os
 import time
 import json
@@ -30,12 +31,31 @@ for link in eolNewsLinkList:
     date = driver.find_element(By.CLASS_NAME, "suqqu_newsDtail-time").text
     content = driver.find_element(By.CLASS_NAME, "suqqu_newsDtail-text")
     products = content.find_elements(By.TAG_NAME, "a")
-    for product in products:
+    productInfoList = [
+        {"name": product.text, "link": product.get_attribute("href")}
+        for product in products
+    ]
+    for productInfo in productInfoList:
+        price = 0
+        try:
+            driver.get(productInfo["link"])
+            priceToStr = driver.find_element(By.CLASS_NAME, "price").text
+            price = extract_number_in_string.extract_number_in_string(priceToStr)
+        except NoSuchElementException:
+            print("Price not found")
+        categories = extract_path_between.extract_path_between(productInfo["link"], "categories", "p")
+        category = ""
+        if len(categories) == 1:
+            category = categories[0]
+        elif len(categories) == 2:
+            category = categories[1]
         eolDataList.append({
             "date": date,
             "brand": "SUQQU",
-            "product": product.text,
-            "url": product.get_attribute("href")
+            "product": productInfo["name"],
+            "url": productInfo["link"],
+            "category": category,
+            "price": price
         })
 json.dump(eolDataList, open("/workspaces/data/SUQQU/eol.json", "w", encoding="utf-8"), ensure_ascii=False)
 
