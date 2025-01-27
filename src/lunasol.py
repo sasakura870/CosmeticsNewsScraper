@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 import os
 import time
 import re
@@ -19,13 +19,14 @@ driver.get(url)
 sections = driver.find_elements(By.CLASS_NAME, "newsArticle-section")
 eolDataList = []
 for section in sections:
-    hoge = section.find_elements(By.CLASS_NAME, "newsArticle-subTitle")
-    if len(hoge) == 0:
-        continue
-    title = section.find_element(By.CLASS_NAME, "newsArticle-subTitle").text
     date = ""
-    if title:
-        match = re.search(r'(\d{4})年(\d{1,2})月', title)
+    try:
+        dateInfo = section.find_element(By.CLASS_NAME, "newsArticle-subTitle").text
+    except NoSuchElementException:
+        print("invalid product section")
+        continue
+    if dateInfo:
+        match = re.search(r'(\d{4})年(\d{1,2})月', dateInfo)
         if match:
             date = f"{match.group(1)}/{match.group(2)}/1"
     if date:
@@ -39,10 +40,12 @@ for section in sections:
                 eolDataList.append({
                     "date": date,
                     "brand": "LUNASOL",
-                    "product": f"{category} {product}",
-                    "url": url
+                    "product": product,
+                    "url": url,
+                    "category": category,
+                    "price": 0
                 })
-json.dump(eolDataList, open("data/LUNASOL/eol.json", "w", encoding="utf-8"), ensure_ascii=False)
+json.dump(eolDataList, open("/workspaces/data/LUNASOL.json", "w", encoding="utf-8"), ensure_ascii=False)
 
 time.sleep(5)
 driver.quit()
