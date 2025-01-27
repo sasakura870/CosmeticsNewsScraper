@@ -57,7 +57,7 @@ for link in eolNewsLinkList:
             "category": category,
             "price": price
         })
-json.dump(eolDataList, open("/workspaces/data/SUQQU/eol.json", "w", encoding="utf-8"), ensure_ascii=False)
+json.dump(eolDataList, open("/workspaces/data/SUQQU.json", "w", encoding="utf-8"), ensure_ascii=False)
 
 time.sleep(5)
 driver.quit()
